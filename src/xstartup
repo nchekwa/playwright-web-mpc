@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Prevent interference from environment variables
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+# Set background to grey
+xsetroot -solid grey
+
+# Launch terminal for debugging (comment out if unnecessary)
+xterm &
+
+# Run window manager as the last command in this script
+# By using exec, this script's process is replaced by fluxbox
+exec fluxbox

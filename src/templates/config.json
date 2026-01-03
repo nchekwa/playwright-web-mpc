@@ -1,0 +1,15 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "launchOptions": {
+      "executablePath": "/usr/local/bin/chrome-wrapper.sh"
+    },
+    "contextOptions": {}
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8831
+  },
+  "outputDir": "/config/output",
+  "imageResponses": "omit"
+}

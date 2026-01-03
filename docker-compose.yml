@@ -1,0 +1,17 @@
+services:
+    playwright-web-mcp:
+        image: playwright-web-mcp
+        build:
+            context: .
+        hostname: playwright-web-mcp
+        ports:
+            - "6901:6901" # noVNC
+            - "8831:8831" # Playwright MCP
+        # shm_size: '2gb'
+        volumes:
+            - ./config:/config
+        environment:
+            - VNC_RESOLUTION=1920x1080
+            # - PLAYWRIGHT_VIEWPORT_SIZE=1024,1080
+            # - VNC_PASSWORD=secret
+            # - NOVNC_PORT=6901
