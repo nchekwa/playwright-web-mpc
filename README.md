@@ -31,8 +31,13 @@ You'll see the Playwright browser running inside the container.
 
 Configure your MCP client to connect to the Playwright MCP server:
 
-**Endpoint:** `http://localhost:8831/sse`
-**Protocol:** SSE (Server-Sent Events)
+**Option 1 - SSE Endpoint:**
+- **Endpoint:** `http://localhost:8831/sse`
+- **Protocol:** SSE (Server-Sent Events)
+
+**Option 2 - HTTP Streamable:**
+- **Endpoint:** `http://localhost:8831/mcp`
+- **Protocol:** HTTP Streamable
 
 ## Configuration
 
@@ -40,7 +45,7 @@ Configure your MCP client to connect to the Playwright MCP server:
 
 Add the following configuration to your MCP client's settings:
 
-**For VS Code / Claude Code / Cline:**
+**For SSE connection:**
 
 ```json
 {
@@ -50,6 +55,21 @@ Add the following configuration to your MCP client's settings:
       "timeout": 30,
       "url": "http://localhost:8831/sse",
       "type": "sse"
+    }
+  }
+}
+```
+
+**For HTTP Streamable connection:**
+
+```json
+{
+  "mcpServers": {
+    "playwright-mcp-docker": {
+      "disabled": false,
+      "timeout": 30,
+      "url": "http://localhost:8831/mcp",
+      "type": "http"
     }
   }
 }

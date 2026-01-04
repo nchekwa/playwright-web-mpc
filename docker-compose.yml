@@ -1,11 +1,12 @@
 services:
     playwright-web-mcp:
+        # image: ghcr.io/nchekwa/playwright-web-mpc:latest
         image: playwright-web-mcp
         build:
             context: .
         hostname: playwright-web-mcp
         ports:
-            - "6901:6901" # noVNC
+            - "6901:6901" # HTTP WEB -> noVNC (set password via VNC_PASSWORD)
             - "8831:8831" # Playwright MCP
         # shm_size: '2gb'
         volumes:
@@ -13,5 +14,6 @@ services:
         environment:
             - VNC_RESOLUTION=1920x1080
             # - PLAYWRIGHT_VIEWPORT_SIZE=1024,1080
+            ## - PLAYWRIGHT_VIEWPORT_SIZE=1920,1080
             # - VNC_PASSWORD=secret
-            # - NOVNC_PORT=6901
+            # - NOVNC_PORT=6901       # docker noVNC internal port
