@@ -8,6 +8,7 @@ services:
         ports:
             - "6901:6901" # HTTP WEB -> noVNC (set password via VNC_PASSWORD)
             - "8831:8831" # Playwright MCP
+            - "8832:8832" # Chrome DevTools MCP (Supergateway)
         # shm_size: '2gb'
         volumes:
             - ./config:/config
@@ -17,3 +18,5 @@ services:
             ## - PLAYWRIGHT_VIEWPORT_SIZE=1920,1080
             # - VNC_PASSWORD=secret
             # - NOVNC_PORT=6901       # docker noVNC internal port
+            # - CHROME_DEVTOOLS_MCP_ENABLED=true
+            # - CHROME_DEVTOOLS_MCP_PORT=8832

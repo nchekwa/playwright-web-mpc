@@ -34,14 +34,14 @@ RUN git clone https://github.com/novnc/noVNC.git /usr/local/novnc
 RUN ln -s /usr/local/novnc/vnc.html /usr/local/novnc/index.html
 
 # Copy wrapper and startup scripts into container
-COPY --chown=node:node src/chrome-wrapper.sh src/startup.sh src/xstartup src/templates/config.json /usr/local/bin/
-RUN chmod +x /usr/local/bin/chrome-wrapper.sh /usr/local/bin/startup.sh /usr/local/bin/xstartup
+COPY --chown=node:node src/chrome-wrapper.sh src/startup.sh src/xstartup src/chrome-devtools-mcp.sh src/templates/config.json /usr/local/bin/
+RUN chmod +x /usr/local/bin/chrome-wrapper.sh /usr/local/bin/startup.sh /usr/local/bin/xstartup /usr/local/bin/chrome-devtools-mcp.sh
 
 # Switch back to default user
 USER node
 
 # Expose ports
-EXPOSE 6901 8831
+EXPOSE 6901 8831 8832
 
 # Command to execute when container starts
 ENTRYPOINT ["/usr/local/bin/startup.sh"]

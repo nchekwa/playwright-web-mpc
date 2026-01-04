@@ -9,7 +9,7 @@ if [ ! -f /config/config.json ]; then
 fi
 
 # Terminate background processes when the script exits
-trap 'kill -TERM $PID_VNC $PID_NOVNC; wait; exit' TERM INT
+trap 'kill -TERM $PID_VNC $PID_NOVNC $PID_CHROME_DEVTOOLS_MCP 2>/dev/null; wait; exit' TERM INT
 
 # Start vncserver
 if [ -n "${VNC_PASSWORD}" ]; then
@@ -48,10 +48,22 @@ echo "VNC server started successfully."
 websockify --web /usr/local/novnc/ ${NOVNC_PORT} localhost:${VNC_PORT} &
 PID_NOVNC=$!
 
+# Start Chrome DevTools MCP service if enabled
+if [ "${CHROME_DEVTOOLS_MCP_ENABLED:-true}" = "true" ]; then
+    echo "Starting Chrome DevTools MCP service..."
+    /usr/local/bin/chrome-devtools-mcp.sh > /dev/null 2>&1 &
+    PID_CHROME_DEVTOOLS_MCP=$!
+else
+    echo "Chrome DevTools MCP service disabled (CHROME_DEVTOOLS_MCP_ENABLED=false)"
+fi
+
 echo "----------------------------------------------------"
 echo "  VNC/noVNC server started (Passwordless)."
 echo "  Connect to:"
 echo "    - Web Browser (noVNC): http://localhost:${NOVNC_PORT}/"
+if [ "${CHROME_DEVTOOLS_MCP_ENABLED:-true}" = "true" ]; then
+    echo "    - Chrome DevTools MCP: http://localhost:${CHROME_DEVTOOLS_MCP_PORT:-8832}/mcp/v1/sse"
+fi
 echo "----------------------------------------------------"
 echo "Starting Playwright MCP application with full options..."
 

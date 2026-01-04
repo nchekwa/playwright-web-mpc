@@ -114,6 +114,8 @@ environment:
   - PLAYWRIGHT_VIEWPORT_SIZE=1920,1080  # Browser viewport (default: 1024,720)
   - VNC_PASSWORD=secret               # VNC password (default: no password)
   - NOVNC_PORT=6901                   # noVNC web interface port
+  - CHROME_DEVTOOLS_MCP_ENABLED=true  # Enable Chrome DevTools MCP service
+  - CHROME_DEVTOOLS_MCP_PORT=8832     # Chrome DevTools MCP service port
 ```
 
 **Available variables:**
@@ -124,8 +126,10 @@ environment:
 | `PLAYWRIGHT_VIEWPORT_SIZE` | Browser window size | `1024,720` |
 | `VNC_PASSWORD` | VNC authentication password | (none) |
 | `NOVNC_PORT` | Port for web-based VNC | `6901` |
+| `CHROME_DEVTOOLS_MCP_ENABLED` | Enable Chrome DevTools MCP service | `true` |
+| `CHROME_DEVTOOLS_MCP_PORT` | Port for Chrome DevTools MCP service | `8832` |
 
-> **Note:** If you change `NOVNC_PORT`, update the port mapping in the `ports` section of `docker-compose.yml` accordingly.
+> **Note:** If you change `NOVNC_PORT` or `CHROME_DEVTOOLS_MCP_PORT`, update the port mapping in the `ports` section of `docker-compose.yml` accordingly.
 
 ## Common Commands
 
@@ -156,6 +160,54 @@ This setup uses:
 4. **Playwright MCP** - Runs in WebUI mode and exposes an SSE endpoint for MCP clients
 
 The architecture allows you to watch Playwright actions in real-time while controlling it programmatically through your MCP client.
+
+## Chrome DevTools MCP Service
+
+This container includes the Chrome DevTools MCP service.
+
+### Configuration
+
+The service is enabled by default and can be configured via environment variables in [docker-compose.yml](docker-compose.yml):
+
+```yaml
+environment:
+  - CHROME_DEVTOOLS_MCP_ENABLED=true  # Set to false to disable
+  - CHROME_DEVTOOLS_MCP_PORT=8832     # Default port
+
+ports:
+  - "8832:8832" # Map host port to container port
+```
+
+### Endpoints
+
+When enabled, the service exposes:
+
+- **POST** `http://localhost:8832/mcp/v1/sse` - HTTP Streamable endpoint (standard MCP path)
+- **POST** `http://localhost:8832/mcp/v1/messages` - Alternative endpoint
+
+### Usage
+
+The service automatically starts `chrome-devtools-mcp@latest` with default settings:
+- Headless mode: enabled by default
+- Isolated mode: can be configured
+
+To customize chrome-devtools-mcp options, modify the `--stdio` command in [src/chrome-devtools-mcp.sh](src/chrome-devtools-mcp.sh).
+
+### Testing
+
+Test the endpoint:
+
+```bash
+curl -X POST http://localhost:8832/mcp/v1/sse \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{"roots":{"listChanged":true},"sampling":{}}}}'
+```
+
+### Technical Details
+
+- **Transport**: HTTP Streamable (SSE-based)
+- **Auto-reconnect**: Managed automatically
+- **Process management**: Background service with graceful shutdown
 
 ## License
 
